@@ -1,0 +1,150 @@
+#include <iostream>
+#include <memory>
+#include "Array.h"
+#include "Triangle.h"
+#include "Square.h"
+#include "Octagon.h"
+
+void printMenu() {
+    std::cout << "\n=== Figure Management System ===" << std::endl;
+    std::cout << "1. Add Triangle" << std::endl;
+    std::cout << "2. Add Square" << std::endl;
+    std::cout << "3. Add Octagon" << std::endl;
+    std::cout << "4. Remove figure by index" << std::endl;
+    std::cout << "5. Print all figures" << std::endl;
+    std::cout << "6. Print all centers" << std::endl;
+    std::cout << "7. Print all areas" << std::endl;
+    std::cout << "8. Print total area" << std::endl;
+    std::cout << "9. Exit" << std::endl;
+    std::cout << "Choose an option: ";
+}
+
+int main() {
+    Array<std::shared_ptr<Figure<int>>> figures;
+    int choice;
+    
+    std::cout << "Welcome to Figure Management System!" << std::endl;
+    
+    // Демонстрация работы с шаблонами
+    std::cout << "\n=== Template Demonstration ===" << std::endl;
+    
+    // Работа с базовым типом Figure*
+    Array<Figure<int>*> figurePointers;
+    
+    // Работа с наследниками
+    Array<Triangle<int>> triangles;
+    Array<Square<int>> squares;
+    Array<Octagon<int>> octagons;
+    
+    triangles.push_back(Triangle<int>(5));
+    squares.push_back(Square<int>(4));
+    octagons.push_back(Octagon<int>(3));
+    
+    std::cout << "Template arrays created successfully!" << std::endl;
+    
+    while (true) {
+        printMenu();
+        std::cin >> choice;
+        
+        switch (choice) {
+            case 1: {
+                std::cout << "Enter triangle side length: ";
+                int side;
+                std::cin >> side;
+                figures.push_back(std::make_shared<Triangle<int>>(side));
+                std::cout << "Triangle added successfully!" << std::endl;
+                break;
+            }
+            case 2: {
+                std::cout << "Enter square side length: ";
+                int side;
+                std::cin >> side;
+                figures.push_back(std::make_shared<Square<int>>(side));
+                std::cout << "Square added successfully!" << std::endl;
+                break;
+            }
+            case 3: {
+                std::cout << "Enter octagon side length: ";
+                int side;
+                std::cin >> side;
+                figures.push_back(std::make_shared<Octagon<int>>(side));
+                std::cout << "Octagon added successfully!" << std::endl;
+                break;
+            }
+            case 4: {
+                if (figures.size() == 0) {
+                    std::cout << "No figures to remove!" << std::endl;
+                    break;
+                }
+                std::cout << "Enter index to remove (0-" << figures.size() - 1 << "): ";
+                size_t index;
+                std::cin >> index;
+                try {
+                    figures.remove(index);
+                    std::cout << "Figure removed successfully!" << std::endl;
+                } catch (const std::out_of_range& e) {
+                    std::cout << "Error: " << e.what() << std::endl;
+                }
+                break;
+            }
+            case 5: {
+                if (figures.size() == 0) {
+                    std::cout << "No figures to display!" << std::endl;
+                } else {
+                    std::cout << "\n=== All Figures ===" << std::endl;
+                    for (size_t i = 0; i < figures.size(); ++i) {
+                        std::cout << "Figure " << i << ": ";
+                        figures[i]->printVertices();
+                    }
+                }
+                break;
+            }
+            case 6: {
+                if (figures.size() == 0) {
+                    std::cout << "No figures to display!" << std::endl;
+                } else {
+                    std::cout << "\n=== Geometric Centers ===" << std::endl;
+                    for (size_t i = 0; i < figures.size(); ++i) {
+                        auto center = figures[i]->getCenter();
+                        std::cout << "Figure " << i << ": " << center << std::endl;
+                    }
+                }
+                break;
+            }
+            case 7: {
+                if (figures.size() == 0) {
+                    std::cout << "No figures to display!" << std::endl;
+                } else {
+                    std::cout << "\n=== Areas ===" << std::endl;
+                    for (size_t i = 0; i < figures.size(); ++i) {
+                        double area = figures[i]->getArea();
+                        std::cout << "Figure " << i << ": " << area << std::endl;
+                    }
+                }
+                break;
+            }
+            case 8: {
+                if (figures.size() == 0) {
+                    std::cout << "No figures to calculate total area!" << std::endl;
+                } else {
+                    double total = 0.0;
+                    for (size_t i = 0; i < figures.size(); ++i) {
+                        total += figures[i]->getArea();
+                    }
+                    std::cout << "Total area of all figures: " << total << std::endl;
+                }
+                break;
+            }
+            case 9: {
+                std::cout << "Goodbye!" << std::endl;
+                return 0;
+            }
+            default: {
+                std::cout << "Invalid choice! Please try again." << std::endl;
+                break;
+            }
+        }
+    }
+    
+    return 0;
+}
